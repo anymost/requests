@@ -28,7 +28,7 @@ func (req *Requests) POST(path string, headers *map[string]string, query *map[st
 	if err != nil {
 		return nil, err
 	}
-	request, err := http.NewRequest("GET", url, buffer)
+	request, err := http.NewRequest("POST", url, buffer)
 	if err != nil {
 		return nil, err
 	}
