@@ -1,10 +1,10 @@
 package requests
 
 import (
+	"bytes"
 	"fmt"
+	"github.com/gin-gonic/gin/json"
 	"net/http"
-	"net/url"
-	"strings"
 )
 
 func formatURL(host string, path string, query *map[string]string) string {
@@ -18,13 +18,9 @@ func formatURL(host string, path string, query *map[string]string) string {
 	return fullURL
 }
 
-func readerFromBody(body *map[string]string) *strings.Reader {
-	data := url.Values{}
-	for key, value := range *body {
-		data.Set(key, value)
-	}
-	reader := strings.NewReader(data.Encode())
-	return reader
+func readerFromBody(body *map[string]string) *bytes.Buffer {
+	value, _ := json.Marshal(body)
+	return bytes.NewBuffer(value)
 }
 
 func setReqHeaders(req *http.Request, headers *map[string]string) {
