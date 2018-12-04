@@ -1,31 +1,30 @@
 package requests
 
 import (
-	"bytes"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 )
 
 func formatURL(host string, path string, query *map[string]string) string {
-	url := host + path
+	fullURL := host + path
 	if query != nil {
-		url = url + "?"
+		fullURL = fullURL + "?"
 		for key, value := range *query {
-			url = fmt.Sprintf("%s%s=%s&", url, key, value)
+			fullURL = fmt.Sprintf("%s%s=%s&", fullURL, key, value)
 		}
 	}
-	return url
+	return fullURL
 }
 
-func bufferFromBody(body *map[string]string)(*bytes.Buffer, error)  {
-	buffer := new(bytes.Buffer)
+func readerFromBody(body *map[string]string) *strings.Reader {
+	data := url.Values{}
 	for key, value := range *body {
-		_, err := fmt.Fprintf(buffer, "%s=\"%s\"\n", key, value)
-		if err != nil {
-			return nil, err
-		}
+		data.Set(key, value)
 	}
-	return buffer, nil
+	reader := strings.NewReader(data.Encode())
+	return reader
 }
 
 func setReqHeaders(req *http.Request, headers *map[string]string) {
